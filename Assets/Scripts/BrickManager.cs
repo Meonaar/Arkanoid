@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Linq;
 
 public class BrickManager : MonoBehaviour
 {
@@ -40,18 +41,46 @@ public class BrickManager : MonoBehaviour
     public Color[] BrickColors;
 
     public List<Brick> RemainingBricks { get; set; }
-    public List<int[,]> levelData { get; set; }
+    public List<int[,]> LevelData { get; set; }
 
-    public int initialBrickCount { get; set; }
+    public int InitialBrickCount { get; set; }
 
     public int currentLevel;
 
     private void Start()
     {
         brickContainer = new GameObject("BricksContainer");
-        this.levelData = this.LoadLevelData();
-        RemainingBricks = new List<Brick>();
+        this.LevelData = this.LoadLevelData();
         GenerateBricks();
+    }
+
+    public void LoadNextLevel()
+    {
+        currentLevel++;
+
+        if (currentLevel >= LevelData.Count)
+        {
+            GameManager.Instance.ShowVictoryScreen();
+        }
+        else
+        {
+            LoadLevel(currentLevel);
+        }
+    }
+
+    public void LoadLevel(int level)
+    {
+        currentLevel = level;
+        ClearReaminingBricks();
+        GenerateBricks();
+    }
+
+    private void ClearReaminingBricks()
+    {
+        foreach (Brick brick in RemainingBricks.ToList())
+        {
+            Destroy(brick.gameObject);
+        }
     }
 
     private List<int [,]> LoadLevelData()
@@ -92,7 +121,8 @@ public class BrickManager : MonoBehaviour
 
     private void GenerateBricks()
     {
-        int[,] currentLevelDate = levelData[currentLevel];
+        RemainingBricks = new List<Brick>();
+        int[,] currentLevelDate = LevelData[currentLevel];
         float currentSpawnX = initialBrickSpawnPosX;
         float currentSpawnY = initialBrickSpawnPosY;
 
@@ -123,7 +153,7 @@ public class BrickManager : MonoBehaviour
 
         }
 
-        initialBrickCount = RemainingBricks.Count;
+        InitialBrickCount = RemainingBricks.Count;
     }
 
 

@@ -10,7 +10,7 @@ public class Brick : MonoBehaviour
     public ParticleSystem destroyEffect;
     private SpriteRenderer sr;
 
-    //public static event Action<Brick> OnBrickDestruction;
+    public static event Action<Brick> OnBrickDestruction;
 
     private void Awake()
     {
@@ -25,9 +25,10 @@ public class Brick : MonoBehaviour
     private void CollisionLogic(Ball ball)
     {
         this.hitPoints--;
-        if (this.hitPoints == 0)
+        if (this.hitPoints <= 0)
         {
-            //OnBrickDestruction?.Invoke(this);
+            BrickManager.Instance.RemainingBricks.Remove(this);
+            OnBrickDestruction?.Invoke(this);
             SpawnDestroyEffect();
             Destroy(this.gameObject);
         }

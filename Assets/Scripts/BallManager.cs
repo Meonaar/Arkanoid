@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class BallManager : MonoBehaviour
@@ -40,7 +41,7 @@ public class BallManager : MonoBehaviour
 
     private void Update()
     {
-        if (!GameManager.Instance.isGameStarted)
+        if (!GameManager.Instance.IsGameStarted)
         {
             Vector3 paddlePos = Paddle.Instance.gameObject.transform.position;
             Vector3 ballPos = new Vector3(paddlePos.x, paddlePos.y + 0.27f, 0);
@@ -50,7 +51,7 @@ public class BallManager : MonoBehaviour
         {
             initialBallRb.isKinematic = false;
             initialBallRb.AddForce(new Vector2(0, initialBallSpeed));
-            GameManager.Instance.isGameStarted = true;
+            GameManager.Instance.IsGameStarted = true;
         }
     }
 
@@ -68,4 +69,13 @@ public class BallManager : MonoBehaviour
         };
     }
 
+    public void ResetBalls()
+    {
+        foreach (var ball in Balls.ToList())
+        {
+            Destroy(ball.gameObject);
+        }
+
+        InitializeBall();
+    }
 }
